@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { createServerSupabaseClient } from "@/lib/supabase-server";
 
 type ReminderBody = {
   message?: string;
@@ -7,6 +7,7 @@ type ReminderBody = {
 
 export async function POST(request: Request) {
   try {
+    const supabase = createServerSupabaseClient();
     const { message, reminder_date } = (await request.json()) as ReminderBody;
 
     if (!message || !reminder_date) {
@@ -16,9 +17,18 @@ export async function POST(request: Request) {
       );
     }
 
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.user) {
+      return Response.json({ error: "Unauthorized." }, { status: 401 });
+    }
+
     const { error } = await supabase.from("reminders").insert({
       user_message: message,
       reminder_date,
+      user_id: session.user.id,
     });
 
     if (error) {
