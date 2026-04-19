@@ -121,6 +121,10 @@ export async function POST(request: Request) {
     console.error("Chat API error:", error);
     const message = getErrorMessage(error);
 
+    if (message.includes("429") || message.includes("quota") || message.includes("Too Many Requests")) {
+      return Response.json({ error: "AI quota exceeded. Please try again later or upgrade your plan." }, { status: 429 });
+    }
+
     return Response.json({ error: message }, { status: 500 });
   }
 }
