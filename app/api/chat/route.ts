@@ -10,11 +10,6 @@ const systemInstruction =
   "rate, and trust score. End every financial suggestion with: 'Ye sirf suggestions " +
   "hain - apne bank se zaroor confirm karein.'";
 
-const systemInstructionContent = {
-  role: "user",
-  parts: [{ text: systemInstruction }],
-} as const;
-
 type HistoryMessage = {
   role: string;
   content: string;
@@ -54,11 +49,11 @@ export async function POST(request: Request) {
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
       model: GEMINI_MODEL,
-      systemInstruction: systemInstructionContent,
+      systemInstruction,
     });
 
     const chat = model.startChat({
-      systemInstruction: systemInstructionContent,
+      systemInstruction,
       history: Array.isArray(history)
         ? history.map((m) => ({
             role: m.role === "assistant" ? "model" : "user",

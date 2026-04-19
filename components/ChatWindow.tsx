@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useRef, useState } from "react";
+import PhotoUpload from "@/components/PhotoUpload";
 
 type Message = {
   role: "user" | "assistant";
@@ -14,9 +15,9 @@ type ChatWindowProps = {
 function LoadingDots() {
   return (
     <div className="flex items-center gap-1">
-      <span className="h-2 w-2 animate-bounce rounded-full bg-slate-400 [animation-delay:-0.3s]" />
-      <span className="h-2 w-2 animate-bounce rounded-full bg-slate-400 [animation-delay:-0.15s]" />
-      <span className="h-2 w-2 animate-bounce rounded-full bg-slate-400" />
+      <span className="h-2 w-2 animate-pulse rounded-full bg-slate-400" />
+      <span className="h-2 w-2 animate-pulse rounded-full bg-slate-400 [animation-delay:0.15s]" />
+      <span className="h-2 w-2 animate-pulse rounded-full bg-slate-400 [animation-delay:0.3s]" />
     </div>
   );
 }
@@ -30,6 +31,10 @@ export default function ChatWindow({ lang }: ChatWindowProps) {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  function handlePhotoResult(text: string) {
+    setMessages((current) => [...current, { role: "assistant", content: text }]);
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -137,7 +142,7 @@ export default function ChatWindow({ lang }: ChatWindowProps) {
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-[480px] flex-col bg-[#efeae2]">
       <header className="sticky top-0 z-10 bg-[#25D366] px-4 py-4 text-white shadow-sm">
-        <h1 className="text-lg font-semibold">Saathi</h1>
+        <h1 className="text-lg font-semibold">Saathi {"\u{1F91D}"}</h1>
       </header>
 
       <div className="flex-1 overflow-y-auto px-3 py-4 pb-28">
@@ -166,7 +171,7 @@ export default function ChatWindow({ lang }: ChatWindowProps) {
                     "max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-6 shadow-sm",
                     isUser
                       ? "rounded-br-md bg-[#25D366] text-white"
-                      : "rounded-bl-md bg-white text-slate-800",
+                      : "rounded-bl-md bg-slate-50 text-slate-800",
                   ].join(" ")}
                 >
                   {isStreamingAssistant ? <LoadingDots /> : message.content}
@@ -187,17 +192,18 @@ export default function ChatWindow({ lang }: ChatWindowProps) {
             type="text"
             value={inputText}
             onChange={(event) => setInputText(event.target.value)}
-            placeholder="Apna sawaal poochho..."
+            placeholder={`Apna sawaal poochho... ${"\u{1F4AC}"}`}
             disabled={isLoading}
             className="flex-1 bg-transparent px-3 py-2 text-sm text-slate-800 outline-none placeholder:text-slate-400"
           />
+          <PhotoUpload lang={lang} onResult={handlePhotoResult} />
           <button
             type="submit"
             disabled={isLoading || !inputText.trim()}
             className="flex h-11 w-11 items-center justify-center rounded-full bg-[#25D366] text-lg text-white transition disabled:cursor-not-allowed disabled:bg-slate-300"
             aria-label="Send message"
           >
-            {">"}
+            {"\u27A4"}
           </button>
         </div>
       </form>

@@ -1,1 +1,12 @@
-[]
+[
+  { "name": "SBI", "rate_1yr": 6.8, "rate_3yr": 7.0, "trust_score": 5 },
+  { "name": "HDFC", "rate_1yr": 7.1, "rate_3yr": 7.25, "trust_score": 5 },
+  { "name": "ICICI", "rate_1yr": 7.1, "rate_3yr": 7.2, "trust_score": 4 },
+  { "name": "Axis", "rate_1yr": 7.2, "rate_3yr": 7.35, "trust_score": 4 },
+  { "name": "PNB", "rate_1yr": 6.75, "rate_3yr": 7.0, "trust_score": 4 },
+  { "name": "Canara", "rate_1yr": 6.9, "rate_3yr": 7.1, "trust_score": 4 },
+  { "name": "Kotak", "rate_1yr": 7.25, "rate_3yr": 7.4, "trust_score": 4 },
+  { "name": "Bank of Baroda", "rate_1yr": 6.8, "rate_3yr": 7.05, "trust_score": 3 },
+  { "name": "IDFC First", "rate_1yr": 7.5, "rate_3yr": 7.6, "trust_score": 3 },
+  { "name": "Yes Bank", "rate_1yr": 7.75, "rate_3yr": 8.0, "trust_score": 2 }
+]
