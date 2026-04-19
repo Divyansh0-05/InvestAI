@@ -8,6 +8,7 @@ declare global {
 }
 
 import { useEffect, useRef, useState } from "react";
+import { Mic } from "lucide-react";
 
 type SpeechRecognitionResultAlternative = {
   transcript: string;
@@ -119,12 +120,12 @@ export default function VoiceInput({ onTranscript }: VoiceInputProps) {
       onClick={handleStartRecording}
       disabled={isRecording}
       className={[
-        "flex h-10 items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-4 text-sm font-medium text-[#111827] shadow-sm transition hover:bg-gray-50",
+        "flex h-10 w-10 items-center justify-center rounded-full border border-[#E2F0E8] bg-white text-gray-700 shadow-sm transition hover:bg-gray-50",
         isRecording ? "border-red-400 bg-red-500 text-white hover:bg-red-500" : "",
       ].join(" ")}
       aria-label={isRecording ? "Listening" : "Start voice input"}
     >
-      {isRecording ? "\u{1F3A4} Sun raha hoon..." : "\u{1F3A4}"}
+      <Mic className="h-5 w-5" />
     </button>
   );
 }

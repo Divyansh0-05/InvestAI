@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Plus, X, Trash2 } from "lucide-react";
 
 export type ChatSessionSummary = {
   id: string;
@@ -82,22 +83,25 @@ export default function ChatSidebar({
       />
 
       <aside
-        className={`fixed inset-y-0 left-0 z-40 flex w-[260px] flex-col border-r border-[#DCFCE7] bg-[#F7FEF8] shadow-[0_24px_60px_rgba(22,163,74,0.12)] transition-transform md:static md:translate-x-0 md:shadow-none ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
+        className={`fixed bottom-0 left-0 z-40 flex w-full flex-col rounded-t-3xl border-t border-[#E2F0E8] bg-white md:static md:h-auto md:w-[260px] md:rounded-none md:border-r md:border-t-0 transition-transform ${
+          isOpen ? "translate-y-0" : "translate-y-full md:translate-y-0"
         }`}
+        style={{
+          height: isOpen ? "85vh" : "auto",
+        }}
       >
-        <div className="border-b border-[#DCFCE7] px-4 pb-4 pt-5">
+        <div className="border-b border-[#E2F0E8] px-4 pb-4 pt-5">
           <div className="flex items-center justify-between gap-3">
-            <Link href="/" className="font-['Plus_Jakarta_Sans'] text-xl font-bold text-[#166534]">
-              investAI {"\u{1F91D}"}
+            <Link href="/" className="font-['Plus_Jakarta_Sans'] text-xl font-bold text-green-700">
+              investAI 🤝
             </Link>
             <button
               type="button"
               onClick={onClose}
-              className="rounded-full p-2 text-[#166534] transition hover:bg-[#DCFCE7] md:hidden"
+              className="rounded-full p-2 text-gray-500 transition hover:bg-gray-100 md:hidden"
               aria-label="Close sidebar"
             >
-              {"\u2715"}
+              <X className="h-5 w-5" />
             </button>
           </div>
 
@@ -107,9 +111,9 @@ export default function ChatSidebar({
               onNewChat();
               onClose();
             }}
-            className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-green-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-green-700"
+            className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-green-700"
           >
-            <span className="text-base leading-none">+</span>
+            <Plus className="h-5 w-5" />
             <span>New Chat</span>
           </button>
         </div>
@@ -120,10 +124,10 @@ export default function ChatSidebar({
               Array.from({ length: 6 }).map((_, index) => (
                 <div
                   key={`skeleton-${index}`}
-                  className="animate-pulse rounded-2xl border border-transparent bg-white px-3 py-3"
+                  className="animate-pulse rounded-xl border border-transparent bg-gray-100 px-3 py-3"
                 >
-                  <div className="h-4 w-3/4 rounded-full bg-[#DCFCE7]" />
-                  <div className="mt-2 h-3 w-1/3 rounded-full bg-[#E5E7EB]" />
+                  <div className="h-4 w-3/4 rounded-full bg-gray-200" />
+                  <div className="mt-2 h-3 w-1/3 rounded-full bg-gray-150" />
                 </div>
               ))
             ) : sessions.length > 0 ? (
@@ -133,10 +137,10 @@ export default function ChatSidebar({
                 return (
                   <div
                     key={session.id}
-                    className={`group w-full rounded-2xl border px-3 py-3 text-left transition ${
+                    className={`group w-full rounded-xl border px-3 py-2.5 text-left transition ${
                       isActive
-                        ? "border-green-200 bg-[#DCFCE7] shadow-sm"
-                        : "border-transparent bg-white hover:border-green-100 hover:bg-[#F0FDF4]"
+                        ? "border-green-200 bg-green-50"
+                        : "border-transparent bg-white hover:bg-green-50"
                     }`}
                   >
                     <div className="flex items-start gap-3">
@@ -148,27 +152,27 @@ export default function ChatSidebar({
                         }}
                         className="min-w-0 flex-1 text-left"
                       >
-                        <p className="truncate text-sm font-semibold text-[#111827]">
+                        <p className="truncate text-sm font-medium text-gray-700">
                           {truncateTitle(session.title || "New Chat")}
                         </p>
-                        <p className="mt-1 text-xs text-[#6B7280]">
+                        <p className="mt-0.5 text-xs text-gray-400">
                           {formatTimeAgo(session.updated_at)}
                         </p>
                       </button>
                       <button
                         type="button"
                         onClick={() => onDeleteSession(session.id)}
-                        className="rounded-full px-2 py-1 text-xs text-[#6B7280] opacity-0 transition hover:bg-white hover:text-red-500 group-hover:opacity-100"
+                        className="rounded-lg p-1.5 text-gray-400 opacity-0 transition hover:bg-red-50 hover:text-red-500 group-hover:opacity-100"
                         aria-label={`Delete ${session.title || "chat session"}`}
                       >
-                        {"\u2715"}
+                        <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
                   </div>
                 );
               })
             ) : (
-              <div className="rounded-2xl border border-dashed border-[#BBF7D0] bg-white px-4 py-5 text-sm leading-6 text-[#4B5563]">
+              <div className="rounded-xl border border-dashed border-[#E2F0E8] bg-[#F7FDF9] px-4 py-5 text-sm leading-6 text-gray-500">
                 No chats yet. Start a new conversation and it will appear here.
               </div>
             )}

@@ -1,6 +1,7 @@
 "use client";
 
 import { ChangeEvent, useRef, useState } from "react";
+import { Camera, Loader2 } from "lucide-react";
 
 type PhotoUploadProps = {
   lang: string;
@@ -84,13 +85,13 @@ export default function PhotoUpload({ lang, onResult }: PhotoUploadProps) {
         type="button"
         onClick={() => inputRef.current?.click()}
         disabled={isUploading}
-        className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-lg text-[#111827] shadow-sm transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
+        className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E2F0E8] bg-white text-gray-700 shadow-sm transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
         aria-label="Upload photo"
       >
         {isUploading ? (
-          <span className="h-5 w-5 animate-spin rounded-full border-2 border-[#16A34A] border-t-transparent" />
+          <Loader2 className="h-5 w-5 animate-spin text-green-600" />
         ) : (
-          "\u{1F4F7}"
+          <Camera className="h-5 w-5" />
         )}
       </button>
     </>

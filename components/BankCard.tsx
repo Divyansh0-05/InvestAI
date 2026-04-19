@@ -1,14 +1,12 @@
 "use client";
 
+import { Star } from "lucide-react";
+
 type BankCardProps = {
   name: string;
   rate_1yr: number;
   trust_score: number;
 };
-
-function getTrustStars(score: number) {
-  return "\u2605".repeat(score) + "\u2606".repeat(5 - score);
-}
 
 export default function BankCard({
   name,
@@ -16,14 +14,21 @@ export default function BankCard({
   trust_score,
 }: BankCardProps) {
   return (
-    <div className="w-full rounded-2xl bg-white p-4 shadow-sm ring-2 ring-green-100 transition-shadow duration-200 hover:shadow-md">
-      <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
+    <div className="w-full rounded-2xl bg-white border border-[#E2F0E8] p-5 shadow-[0_2px_12px_rgba(22,163,74,0.08)] transition-all duration-200 hover:-translate-y-1 hover:shadow-md">
+      <p className="text-xs font-semibold uppercase tracking-widest text-gray-600">
         {name}
       </p>
-      <p className="mt-2 text-2xl font-bold text-[#16A34A]">{rate_1yr.toFixed(2)}%</p>
-      <p className="mt-2 text-sm tracking-wide text-[#16A34A]">
-        {getTrustStars(trust_score)}
-      </p>
+      <p className="mt-3 text-3xl font-bold text-green-600">{rate_1yr.toFixed(2)}%</p>
+      <div className="mt-3 flex gap-1">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Star
+            key={i}
+            className={`h-4 w-4 ${
+              i < trust_score ? "fill-green-500 text-green-500" : "text-gray-200"
+            }`}
+          />
+        ))}
+      </div>
     </div>
   );
 }

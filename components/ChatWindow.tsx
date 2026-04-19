@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { Menu, Send, LogOut, Bell, Check } from "lucide-react";
 import { useLang } from "@/context/LangContext";
 import LangSwitcher from "@/components/LangSwitcher";
 import PhotoUpload from "@/components/PhotoUpload";
@@ -39,9 +40,9 @@ type ChatWindowProps = {
 function LoadingDots() {
   return (
     <div className="flex items-center gap-1">
-      <span className="h-2 w-2 animate-pulse rounded-full bg-slate-400" />
-      <span className="h-2 w-2 animate-pulse rounded-full bg-slate-400 [animation-delay:0.15s]" />
-      <span className="h-2 w-2 animate-pulse rounded-full bg-slate-400 [animation-delay:0.3s]" />
+      <span className="h-2 w-2 rounded-full bg-green-600 animate-dot" />
+      <span className="h-2 w-2 rounded-full bg-green-600 animate-dot" style={{ animationDelay: "0.2s" }} />
+      <span className="h-2 w-2 rounded-full bg-green-600 animate-dot" style={{ animationDelay: "0.4s" }} />
     </div>
   );
 }
@@ -445,9 +446,9 @@ export default function ChatWindow({
 
   return (
     <div className="flex min-h-screen flex-1 flex-col bg-[#F9FAFB]">
-      <header className="sticky top-0 z-10 px-0 pb-2 text-white">
+      <header className="sticky top-0 z-10 px-0 text-white">
         <div
-          className="w-full rounded-b-[28px] bg-gradient-to-r from-green-700 to-green-500 px-4 pb-4 pt-4 shadow-[0_12px_40px_rgba(22,163,74,0.28)]"
+          className="w-full bg-gradient-to-r from-green-700 to-green-600 px-4 py-4 shadow-[0_2px_12px_rgba(22,163,74,0.15)]"
           style={{ paddingTop: "calc(env(safe-area-inset-top) + 1rem)" }}
         >
           <div className="flex items-start justify-between gap-3">
@@ -455,35 +456,37 @@ export default function ChatWindow({
               <button
                 type="button"
                 onClick={onOpenSidebar}
-                className="mt-0.5 rounded-full p-2 text-white transition hover:bg-white/10 md:hidden"
+                className="mt-0.5 rounded-lg p-2 text-white transition hover:bg-white/10 md:hidden"
                 aria-label="Open chat history"
               >
-                {"\u2630"}
+                <Menu className="h-5 w-5" />
               </button>
               <div>
                 <Link
                   href="/"
-                  className="block font-['Plus_Jakarta_Sans'] text-xl font-bold text-white"
+                  className="block font-['Plus_Jakarta_Sans'] text-lg font-bold text-white"
                 >
-                  investAI {"\u{1F91D}"}
+                  investAI 🤝
                 </Link>
-                <p className="mt-1 text-xs text-white/80">Aapka financial dost</p>
+                <p className="mt-0.5 text-xs text-white/70">Aapka financial dost</p>
               </div>
             </div>
-            <div className="flex items-start gap-3">
+            <div className="flex items-start gap-2">
               <LangSwitcher />
-              <div className="text-right">
-                {userEmail ? <p className="text-[11px] text-white/80">{userEmail}</p> : null}
-                <div className="mt-1 flex items-center justify-end gap-3">
-                  <Link href="/reminders" className="text-xs font-medium text-white transition hover:text-green-100">
-                    Reminders
+              <div className="text-right text-xs">
+                {userEmail ? <p className="text-white/70 truncate max-w-[100px]">{userEmail}</p> : null}
+                <div className="mt-1 flex items-center justify-end gap-2">
+                  <Link href="/reminders" className="inline-flex items-center gap-1 font-medium text-white transition hover:text-green-100" title="Reminders">
+                    <Bell className="h-4 w-4" />
+                    <span className="hidden sm:inline">Reminders</span>
                   </Link>
                   <button
                     type="button"
                     onClick={() => void handleLogout()}
-                    className="text-xs font-medium text-white transition hover:text-green-100"
+                    className="inline-flex items-center gap-1 font-medium text-white transition hover:text-green-100" title="Logout"
                   >
-                    Logout
+                    <LogOut className="h-4 w-4" />
+                    <span className="hidden sm:inline">Logout</span>
                   </button>
                 </div>
               </div>
@@ -492,10 +495,10 @@ export default function ChatWindow({
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto px-3 py-5 pb-28 md:px-5">
+      <div className="flex-1 overflow-y-auto px-3 py-5 pb-28 md:px-5 bg-[#F7FDF9]">
         <div className="mx-auto flex w-full max-w-4xl flex-col gap-3">
           {messages.length === 0 ? (
-            <div className="rounded-3xl border border-[#dcfce7] bg-[#F0FDF4] px-4 py-4 text-sm leading-6 text-[#166534] shadow-sm">
+            <div className="rounded-2xl border border-[#E2F0E8] bg-white px-4 py-4 text-sm leading-6 text-green-700 shadow-[0_2px_12px_rgba(22,163,74,0.08)]">
               Namaste! Apna sawaal poochho, main simple language mein help karoonga.
             </div>
           ) : null}
@@ -515,23 +518,22 @@ export default function ChatWindow({
               >
                 {isUser ? (
                   <div className="max-w-[85%]">
-                    <div className="rounded-2xl rounded-tr-sm bg-green-600 px-4 py-3 text-sm leading-6 text-white shadow-sm">
+                    <div className="rounded-2xl rounded-br-none bg-green-600 px-4 py-2.5 text-sm leading-6 text-white shadow-[0_2px_12px_rgba(22,163,74,0.08)]">
                       {isStreamingAssistant ? <LoadingDots /> : message.content}
                     </div>
-                    <p className="mt-1 px-1 text-right text-[11px] text-[#6B7280]">
+                    <p className="mt-1 px-1 text-right text-[10px] text-[#6B7280]">
                       {message.timestamp}
                     </p>
                   </div>
                 ) : (
                   <div className="max-w-[85%]">
-                    <p className="mb-1 flex items-center gap-1 px-1 text-[11px] font-medium text-green-700">
-                      <span>{"\u{1F91D}"}</span>
-                      <span>Saathi</span>
+                    <p className="mb-1 flex items-center gap-1 px-1 text-[10px] font-semibold text-green-700">
+                      investAI 🤝
                     </p>
-                    <div className="rounded-2xl rounded-tl-sm border border-gray-100 bg-white px-4 py-3 text-sm leading-6 text-gray-800 shadow-sm">
+                    <div className="rounded-2xl rounded-bl-none border border-[#E2F0E8] bg-white px-4 py-2.5 text-sm leading-6 text-gray-800 shadow-[0_2px_12px_rgba(22,163,74,0.08)]">
                       {isStreamingAssistant ? <LoadingDots /> : <AssistantMessage content={message.content} />}
                     </div>
-                    <p className="mt-1 px-1 text-[11px] text-[#6B7280]">{message.timestamp}</p>
+                    <p className="mt-1 px-1 text-left text-[10px] text-[#6B7280]">{message.timestamp}</p>
                   </div>
                 )}
               </div>
@@ -543,32 +545,33 @@ export default function ChatWindow({
 
       <form
         onSubmit={handleSubmit}
-        className="sticky bottom-0 border-t border-gray-200 bg-white/90 px-3 py-3 backdrop-blur-sm"
+        className="sticky bottom-0 border-t border-[#E2F0E8] bg-white/95 backdrop-blur px-3 py-3"
       >
         {showToast ? (
-          <div className="mb-3 rounded-xl border border-green-200 bg-[#dcfce7] px-4 py-2 text-sm font-medium text-[#166534] shadow-sm">
-            {"\u2713"} Reminder save ho gaya!
+          <div className="mb-3 rounded-xl border border-green-200 bg-green-50 px-4 py-2 text-sm font-medium text-green-700 shadow-sm flex items-center gap-2">
+            <Check className="h-4 w-4" />
+            Reminder save ho gaya!
           </div>
         ) : null}
-        <div className="mx-auto flex w-full max-w-4xl items-center gap-2 rounded-[28px] border border-[#E5E7EB] bg-white p-2 shadow-sm">
+        <div className="mx-auto flex w-full max-w-4xl items-center gap-2 rounded-full border border-[#E2F0E8] bg-[#F7FDF9] p-1.5 shadow-sm">
           <input
             ref={inputRef}
             type="text"
             value={inputText}
             onChange={(event) => setInputText(event.target.value)}
-            placeholder={`Apna sawaal poochho... ${"\u{1F4AC}"}`}
+            placeholder="Apna sawaal poochho..."
             disabled={isLoading}
-            className="flex-1 rounded-full border border-[#E5E7EB] bg-white px-4 py-2.5 text-sm text-[#111827] outline-none transition placeholder:text-[#9CA3AF] focus:ring-2 focus:ring-green-500"
+            className="flex-1 rounded-full border-0 bg-transparent px-5 py-2.5 text-sm text-[#111827] outline-none placeholder:text-gray-400"
           />
           <VoiceInput onTranscript={handleTranscript} />
           <PhotoUpload lang={lang} onResult={handlePhotoResult} />
           <button
             type="submit"
             disabled={isLoading || !inputText.trim()}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-green-600 text-lg text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-green-600 text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-300 shadow-sm"
             aria-label="Send message"
           >
-            {"\u27A4"}
+            <Send className="h-5 w-5" />
           </button>
         </div>
       </form>
