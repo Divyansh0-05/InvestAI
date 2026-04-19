@@ -16,10 +16,12 @@ export default function BankCard({
   trust_score,
 }: BankCardProps) {
   return (
-    <div className="w-full max-w-[240px] rounded-2xl bg-white p-3 shadow-sm ring-1 ring-slate-100">
-      <p className="text-sm font-semibold text-slate-900">{name}</p>
-      <p className="mt-1 text-2xl font-bold text-[#25D366]">{rate_1yr.toFixed(2)}%</p>
-      <p className="mt-1 text-sm tracking-wide text-[#e0a100]">
+    <div className="w-full rounded-2xl bg-white p-4 shadow-sm ring-2 ring-green-100 transition-shadow duration-200 hover:shadow-md">
+      <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
+        {name}
+      </p>
+      <p className="mt-2 text-2xl font-bold text-[#16A34A]">{rate_1yr.toFixed(2)}%</p>
+      <p className="mt-2 text-sm tracking-wide text-[#16A34A]">
         {getTrustStars(trust_score)}
       </p>
     </div>

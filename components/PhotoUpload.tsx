@@ -84,13 +84,13 @@ export default function PhotoUpload({ lang, onResult }: PhotoUploadProps) {
         type="button"
         onClick={() => inputRef.current?.click()}
         disabled={isUploading}
-        className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-lg shadow-sm ring-1 ring-black/5 transition disabled:cursor-not-allowed disabled:opacity-60"
+        className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-lg text-[#111827] shadow-sm transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
         aria-label="Upload photo"
       >
         {isUploading ? (
-          <span className="h-5 w-5 animate-spin rounded-full border-2 border-[#25D366] border-t-transparent" />
+          <span className="h-5 w-5 animate-spin rounded-full border-2 border-[#16A34A] border-t-transparent" />
         ) : (
-          "📷"
+          "\u{1F4F7}"
         )}
       </button>
     </>

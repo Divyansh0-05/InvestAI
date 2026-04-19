@@ -1,14 +1,26 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI, type Content } from "@google/generative-ai";
 
 const GEMINI_MODEL = "gemini-2.5-flash-lite";
 
-const systemInstruction =
-  "You are Saathi, a friendly financial assistant for rural and semi-urban Indians. " +
-  "Always respond in the same language the user writes in. If they write in Hindi or " +
-  "Hinglish (Hindi mixed with English), respond in Hinglish. Keep responses short, " +
-  "warm, and avoid financial jargon. When recommending FDs, always mention bank name, " +
-  "rate, and trust score. End every financial suggestion with: 'Ye sirf suggestions " +
-  "hain - apne bank se zaroor confirm karein.'";
+const systemInstruction: Content = {
+  role: "system",
+  parts: [
+    {
+      text:
+        "You are investAI, a friendly financial assistant for rural and semi-urban Indians. " +
+        "Always respond in the same language the user writes in. If they write in Hindi or " +
+        "Hinglish (Hindi mixed with English), respond in Hinglish. Keep responses short, " +
+        "warm, and avoid financial jargon. When recommending FDs, always mention bank name, " +
+        "rate, and trust score. End every financial suggestion with: 'Ye sirf suggestions " +
+        "hain - apne bank se zaroor confirm karein.' " +
+        "When the user asks for a reminder (words like 'yaad dilao', 'remind me', " +
+        "'reminder chahiye'), extract the reminder text and date. At the very end of " +
+        "your response, append this exact format on a new line: " +
+        '[REMINDER:{"message":"reminder text here","date":"YYYY-MM-DD"}] ' +
+        "Only add this if the user explicitly asked for a reminder.",
+    },
+  ],
+};
 
 type HistoryMessage = {
   role: string;
@@ -20,6 +32,24 @@ type ChatRequestBody = {
   lang: string;
   history: HistoryMessage[];
 };
+
+function normalizeHistory(history: HistoryMessage[]) {
+  const mappedHistory = history
+    .filter(
+      (message): message is HistoryMessage =>
+        Boolean(message) &&
+        typeof message.content === "string" &&
+        message.content.trim().length > 0 &&
+        (message.role === "user" || message.role === "assistant"),
+    )
+    .map((message) => ({
+      role: message.role === "assistant" ? "model" : "user",
+      parts: [{ text: message.content }],
+    }));
+
+  const firstUserIndex = mappedHistory.findIndex((message) => message.role === "user");
+  return firstUserIndex === -1 ? [] : mappedHistory.slice(firstUserIndex);
+}
 
 function getErrorMessage(error: unknown) {
   if (error instanceof Error) {
@@ -53,13 +83,7 @@ export async function POST(request: Request) {
     });
 
     const chat = model.startChat({
-      systemInstruction,
-      history: Array.isArray(history)
-        ? history.map((m) => ({
-            role: m.role === "assistant" ? "model" : "user",
-            parts: [{ text: m.content }],
-          }))
-        : [],
+      history: Array.isArray(history) ? normalizeHistory(history) : [],
     });
 
     const prompt =
