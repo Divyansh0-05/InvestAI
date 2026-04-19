@@ -32,6 +32,7 @@ export async function POST(request: Request) {
     });
 
     if (error) {
+      console.error("Supabase insert error:", error);
       throw error;
     }
 
