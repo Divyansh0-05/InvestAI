@@ -2,25 +2,53 @@ import { GoogleGenerativeAI, type Content } from "@google/generative-ai";
 
 const GEMINI_MODEL = "gemini-2.5-flash-lite";
 
-const systemInstruction: Content = {
-  role: "system",
-  parts: [
-    {
-      text:
-        "You are investAI, a friendly financial assistant for rural and semi-urban Indians. " +
-        "Always respond in the same language the user writes in. If they write in Hindi or " +
-        "Hinglish (Hindi mixed with English), respond in Hinglish. Keep responses short, " +
-        "warm, and avoid financial jargon. When recommending FDs, always mention bank name, " +
-        "rate, and trust score. End every financial suggestion with: 'Ye sirf suggestions " +
-        "hain - apne bank se zaroor confirm karein.' " +
-        "When the user asks for a reminder (words like 'yaad dilao', 'remind me', " +
-        "'reminder chahiye'), extract the reminder text and date. At the very end of " +
-        "your response, append this exact format on a new line: " +
-        '[REMINDER:{"message":"reminder text here","date":"YYYY-MM-DD"}] ' +
-        "Only add this if the user explicitly asked for a reminder.",
-    },
-  ],
-};
+function getSystemInstruction(lang?: string): Content {
+  const baseInstruction =
+    "You are investAI, a friendly financial assistant for rural and semi-urban Indians. " +
+    "Keep responses short, warm, and avoid financial jargon. When recommending FDs, always mention bank name, " +
+    "rate, and trust score. End every financial suggestion with a reminder to confirm with the bank. " +
+    "When the user asks for a reminder (words like 'yaad dilao', 'remind me', " +
+    "'reminder chahiye'), extract the reminder text and date. At the very end of " +
+    "your response, append this exact format on a new line: " +
+    '[REMINDER:{"message":"reminder text here","date":"YYYY-MM-DD"}] ' +
+    "Only add this if the user explicitly asked for a reminder.";
+
+  let languageInstruction = "";
+
+  // Add language-specific instruction based on user preference
+  if (lang?.toLowerCase().includes("hindi")) {
+    languageInstruction =
+      "Always respond in pure Hindi (Devanagari script). Use simple, everyday Hindi words. " +
+      "For the bank reminder, use: 'Ye sirf sujhaav hain - zaroor apne bank se pooch le.'";
+  } else if (lang?.toLowerCase().includes("hinglish") || lang?.toLowerCase().includes("english")) {
+    languageInstruction =
+      "Always respond in Hinglish (Hindi mixed with English, using Roman script). Use simple everyday language. " +
+      "For the bank reminder, use: 'Ye sirf suggestions hain - apne bank se zaroor confirm karein.'";
+  } else if (lang?.toLowerCase().includes("bhojpuri")) {
+    languageInstruction =
+      "Always respond in Bhojpuri language. Use simple Bhojpuri words and phrases. " +
+      "For the bank reminder, use appropriate Bhojpuri phrasing.";
+  } else if (lang?.toLowerCase().includes("punjabi")) {
+    languageInstruction =
+      "Always respond in Punjabi language. Use simple, everyday Punjabi words. " +
+      "For the bank reminder, use appropriate Punjabi phrasing.";
+  } else {
+    // Default to Hinglish
+    languageInstruction =
+      "Always respond in Hinglish (Hindi mixed with English, using Roman script). " +
+      "Use simple, everyday language. " +
+      "For the bank reminder, use: 'Ye sirf suggestions hain - apne bank se zaroor confirm karein.'";
+  }
+
+  return {
+    role: "system",
+    parts: [
+      {
+        text: baseInstruction + " " + languageInstruction,
+      },
+    ],
+  };
+}
 
 type HistoryMessage = {
   role: string;
@@ -79,17 +107,14 @@ export async function POST(request: Request) {
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
       model: GEMINI_MODEL,
-      systemInstruction,
+      systemInstruction: getSystemInstruction(lang),
     });
 
     const chat = model.startChat({
       history: Array.isArray(history) ? normalizeHistory(history) : [],
     });
 
-    const prompt =
-      typeof lang === "string" && lang.trim()
-        ? `User language preference: ${lang}\n\n${message}`
-        : message;
+    const prompt = message;
 
     const result = await chat.sendMessageStream(prompt);
     const encoder = new TextEncoder();

@@ -1,16 +1,29 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import ChatSidebar, { type ChatSessionSummary } from "@/components/ChatSidebar";
 import ChatWindow from "@/components/ChatWindow";
 import { getSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 export default function ChatPage() {
   const supabase = getSupabaseBrowserClient();
+  const router = useRouter();
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [sessions, setSessions] = useState<ChatSessionSummary[]>([]);
   const [isLoadingSessions, setIsLoadingSessions] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+
+  useEffect(() => {
+    async function getUserEmail() {
+      const { data } = await supabase.auth.getSession();
+      if (data.session?.user.email) {
+        setUserEmail(data.session.user.email);
+      }
+    }
+    void getUserEmail();
+  }, [supabase]);
 
   useEffect(() => {
     let isMounted = true;
@@ -80,6 +93,12 @@ export default function ChatPage() {
     }
   }
 
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    router.push("/auth");
+    router.refresh();
+  }
+
   return (
     <div className="flex min-h-screen bg-[#F3F7F4]">
       {/* Sidebar is driven from local session state so chat switches feel instant. */}
@@ -92,6 +111,8 @@ export default function ChatPage() {
         onNewChat={() => setCurrentSessionId(null)}
         onSelectSession={(sessionId) => setCurrentSessionId(sessionId)}
         onDeleteSession={(sessionId) => void handleDeleteSession(sessionId)}
+        userEmail={userEmail}
+        onLogout={handleLogout}
       />
 
       <div className="flex min-h-screen flex-1 md:pl-0">

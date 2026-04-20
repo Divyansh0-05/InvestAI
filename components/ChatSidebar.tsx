@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Plus, X, Trash2 } from "lucide-react";
+import { Plus, X, Trash2, Bell, LogOut } from "lucide-react";
 
 export type ChatSessionSummary = {
   id: string;
@@ -18,6 +18,8 @@ type ChatSidebarProps = {
   onNewChat: () => void;
   onSelectSession: (sessionId: string) => void;
   onDeleteSession: (sessionId: string) => void;
+  userEmail?: string;
+  onLogout?: () => void;
 };
 
 function truncateTitle(title: string) {
@@ -71,6 +73,8 @@ export default function ChatSidebar({
   onNewChat,
   onSelectSession,
   onDeleteSession,
+  userEmail,
+  onLogout,
 }: ChatSidebarProps) {
   return (
     <>
@@ -176,6 +180,35 @@ export default function ChatSidebar({
                 No chats yet. Start a new conversation and it will appear here.
               </div>
             )}
+          </div>
+        </div>
+
+        <div className="border-t border-[#E2F0E8] px-4 py-4">
+          {userEmail ? (
+            <p className="mb-3 truncate text-xs text-gray-600">{userEmail}</p>
+          ) : null}
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-3">
+            <Link 
+              href="/reminders" 
+              onClick={onClose}
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-green-50 hover:text-green-700"
+            >
+              <Bell className="h-4 w-4" />
+              <span>Reminders</span>
+            </Link>
+            {onLogout ? (
+              <button
+                type="button"
+                onClick={() => {
+                  onLogout();
+                  onClose();
+                }}
+                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-red-50 hover:text-red-700"
+              >
+                <LogOut className="h-4 w-4" />
+                <span>Logout</span>
+              </button>
+            ) : null}
           </div>
         </div>
       </aside>

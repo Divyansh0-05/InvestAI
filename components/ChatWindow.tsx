@@ -1,11 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Menu, Send, LogOut, Bell, Check } from "lucide-react";
+import { Menu, Send, Check } from "lucide-react";
 import { useLang } from "@/context/LangContext";
 import LangSwitcher from "@/components/LangSwitcher";
 import PhotoUpload from "@/components/PhotoUpload";
@@ -83,13 +82,11 @@ export default function ChatWindow({
   onOpenSidebar,
 }: ChatWindowProps) {
   const { lang } = useLang();
-  const router = useRouter();
   const supabase = getSupabaseBrowserClient();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
-  const [userEmail, setUserEmail] = useState("");
   const [activeSessionId, setActiveSessionId] = useState<string | null>(sessionId);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -117,33 +114,6 @@ export default function ChatWindow({
   useEffect(() => {
     setActiveSessionId(sessionId);
   }, [sessionId]);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    async function loadSession() {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
-      if (isMounted) {
-        setUserEmail(session?.user.email ?? "");
-      }
-    }
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUserEmail(session?.user.email ?? "");
-    });
-
-    void loadSession();
-
-    return () => {
-      isMounted = false;
-      subscription.unsubscribe();
-    };
-  }, [supabase]);
 
   useEffect(() => {
     let isMounted = true;
@@ -438,12 +408,6 @@ export default function ChatWindow({
     }
   }
 
-  async function handleLogout() {
-    await supabase.auth.signOut();
-    router.push("/auth");
-    router.refresh();
-  }
-
   return (
     <div className="flex min-h-screen flex-1 flex-col bg-[#F9FAFB]">
       <header className="sticky top-0 z-10 px-0 text-white">
@@ -471,26 +435,7 @@ export default function ChatWindow({
                 <p className="mt-0.5 text-xs text-white/70">Aapka financial dost</p>
               </div>
             </div>
-            <div className="flex items-start gap-2">
-              <LangSwitcher />
-              <div className="text-right text-xs">
-                {userEmail ? <p className="text-white/70 truncate max-w-[100px]">{userEmail}</p> : null}
-                <div className="mt-1 flex items-center justify-end gap-2">
-                  <Link href="/reminders" className="inline-flex items-center gap-1 font-medium text-white transition hover:text-green-100" title="Reminders">
-                    <Bell className="h-4 w-4" />
-                    <span className="hidden sm:inline">Reminders</span>
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={() => void handleLogout()}
-                    className="inline-flex items-center gap-1 font-medium text-white transition hover:text-green-100" title="Logout"
-                  >
-                    <LogOut className="h-4 w-4" />
-                    <span className="hidden sm:inline">Logout</span>
-                  </button>
-                </div>
-              </div>
-            </div>
+            <LangSwitcher />
           </div>
         </div>
       </header>
